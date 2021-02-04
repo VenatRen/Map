@@ -12,12 +12,24 @@ export default function App() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
+  
+
   const [latitude, setLatitude] = useState(44.04444);
   const [longitude, setLongitude] = useState(42.86056);
 
   const [marker, setMarker] = useState( {
     latitude, longitude
   })
+
+  const [loaded, setLoaded] = useState(false);
+
+
+  const [region, setRegion] = useState({
+    latitude,
+    longitude,
+    latitudeDelta: 0.02,
+    longitudeDelta: 0.01
+  });
 
   useEffect(() => {
     (async () => {
@@ -29,14 +41,17 @@ export default function App() {
 
       const detectedLocation = await Location.getCurrentPositionAsync({});
       
-      console.log(`latitude is ${detectedLocation.coords.latitude} longitude is${detectedLocation.coords.longitude}`)
+      
       setLatitude(detectedLocation.coords.latitude);
       setLongitude(detectedLocation.coords.longitude);
+      setRegion({latitude: detectedLocation.coords.latitude,
+        longitude: detectedLocation.coords.longitude, latitudeDelta: 0.02,
+        longitudeDelta: 0.01 })
       setMarker({
         latitude: detectedLocation.coords.latitude,
         longitude: detectedLocation.coords.longitude
       });  
-      
+      setLoaded(true);
       
     })();
   }, []);
@@ -46,37 +61,26 @@ export default function App() {
     console.log("Error" ,errorMsg)
   }
 
-
-  const [region, setRegion] = useState({
-    latitude,
-    longitude,
-    latitudeDelta: 0.02,
-    longitudeDelta: 0.01
-  });
-
-  
-
   const urlTemplate = "http://c.tile.openstreetmap.org/{z}/{x}/{y}.png";
-  const [loaded, setLoaded] = useState(false);
-
   
 
   return (
     <View style={styles.container}>
-     
-     <MapView
+     {
+
+      loaded ?
+      <MapView
           style={{width: "100%", height: "100%"}}
-          initialRegion={region}
-          onRegionChange={setRegion}
-          onLayout={()=>{console.log('loaded');setLoaded(true)}}
+           initialRegion={region}
+           onRegionChangeComplete={(reg)=>setRegion(reg)}
+          
       >
       
-      {
-
-        (loaded && marker) ? 
-        <>
+     
             <Marker
-          coordinate={marker}
+            title="mytitle"
+            description="mydescription"
+            coordinate={{latitude, longitude}}
           />
             <UrlTile
         /**
@@ -95,12 +99,14 @@ export default function App() {
          */
         flipY={false}
       />
-    </>
-  : <></>
-
-      }
+    
       
   </MapView>
+  :<></>
+
+
+     }
+     
 
     </View>
   );
