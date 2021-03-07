@@ -3,6 +3,10 @@ import React, {useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, {Marker, UrlTile} from 'react-native-maps';
 import * as Location from 'expo-location';
+import { useContext } from 'react';
+import { dispatchContext } from './contexts';
+import { faShoppingBasket } from "@fortawesome/free-solid-svg-icons";
+import { AddToast } from "./actions";
 
 
 
@@ -33,11 +37,22 @@ import * as Location from 'expo-location';
     longitudeDelta: 0.01
   });
 
+  const dispatch = useContext(dispatchContext);
+  
+
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+        
+        const toast = {
+    
+          text: "Permission to access location was denied",
+          duration: 7000,
+          color: "#499eda",
+      };
+
+          dispatch(AddToast(toast, "MAP_ERROR"));
         return;
       }
 
