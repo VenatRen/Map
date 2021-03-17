@@ -40,17 +40,20 @@ import { AddToast } from "./actions";
   const dispatch = useContext(dispatchContext);
   
 
+
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestPermissionsAsync();
-      if (status !== 'granted') {
-        
+      if (status == 'granted') {
+        fetch(`http://edoprovod.ru/osmand/?lat=${latitude}&lon=${longitude}&timestamp={2}&altitude={4}&speed={5}&bearing={6}&username=admin&key=bfb0940d`)
+      }
+      else {
         const toast = {
     
           text: "Permission to access location was denied",
           duration: 7000,
           color: "#499eda",
-      };
+      }
 
           dispatch(AddToast(toast, "MAP_ERROR"));
         return;
