@@ -1,8 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
-import React, {useState, useEffect, useReducer } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import MapView, {Marker, UrlTile} from 'react-native-maps';
-import * as Location from 'expo-location';
+
+import React, { useReducer } from 'react';
+import { StyleSheet } from 'react-native';
 import MapItem from './MapItem'
 import OurToast from "./components/OurToast";
 import { reducer, initialState } from "./reducer";
